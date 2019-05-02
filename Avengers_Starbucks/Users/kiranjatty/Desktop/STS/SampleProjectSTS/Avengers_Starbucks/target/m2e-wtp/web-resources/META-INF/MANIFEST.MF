@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Implementation-Title: Avengers_Starbucks
+Implementation-Version: 0.0.1-SNAPSHOT
+Built-By: kiranjatty
+Implementation-Vendor-Id: com.avengers.starbucks
+Build-Jdk: 1.8.0_91
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
+ ot-starter-parent/com.avengers.starbucks
+Created-By: Maven Integration for Eclipse
+
