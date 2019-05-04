@@ -8,11 +8,11 @@ import com.avengers.starbucks.dto.StarbucksOutputMessage;
 import com.avengers.starbucks.model.Product;
 import com.avengers.starbucks.model.ProductRequest;
 import com.avengers.starbucks.service.StarbucksService;
-import com.harshit.sse.dao.UserInfo;
-import com.harshit.sse.dto.GenericResponse;
-import com.harshit.sse.dto.LoginUser;
-import com.harshit.sse.dto.SignupUser;
-import com.harshit.sse.dto.UserDetailsDTO;
+import com.avengers.starbucks.dao.UserInfo;
+import com.avengers.starbucks.dto.GenericResponse;
+import com.avengers.starbucks.dto.LoginUser;
+import com.avengers.starbucks.dto.SignupUser;
+import com.avengers.starbucks.dto.UserDetailsDTO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,6 @@ import javax.xml.bind.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 
 @Component
 public class StarbucksServiceImpl implements StarbucksService {
