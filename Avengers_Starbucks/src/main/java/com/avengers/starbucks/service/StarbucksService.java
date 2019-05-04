@@ -14,7 +14,7 @@ public interface StarbucksService{
     
 	StarbucksOutputMessage addCards(AddCardsRequest addCardsRequest) throws ValidationException;
 
-	StarbucksOutputMessage manageOrder(OrderRequest request);
+	//StarbucksOutputMessage manageOrder(OrderRequest request);
 	
 	GenericResponse SignupRequest(SignupUser userRequest);
     

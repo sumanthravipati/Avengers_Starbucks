@@ -1,6 +1,6 @@
 package com.avengers.starbucks.service.impl;
 
-import com.avengers.starbucks.dao.OrderDAO;
+
 import com.avengers.starbucks.dao.StarbucksDAO;
 import com.avengers.starbucks.dto.AddCardsRequest;
 import com.avengers.starbucks.dto.OrderRequest;
@@ -8,7 +8,6 @@ import com.avengers.starbucks.dto.StarbucksOutputMessage;
 import com.avengers.starbucks.model.Product;
 import com.avengers.starbucks.model.ProductRequest;
 import com.avengers.starbucks.service.StarbucksService;
-import com.avengers.starbucks.dao.UserInfo;
 import com.avengers.starbucks.dto.GenericResponse;
 import com.avengers.starbucks.dto.LoginUser;
 import com.avengers.starbucks.dto.SignupUser;
@@ -32,23 +31,19 @@ public class StarbucksServiceImpl implements StarbucksService {
   @Autowired
   StarbucksDAO starbucksDAO;
 
-  @Autowired
-  OrderDAO orderDao;
-
-  @Autowired
-  private UserInfo userDAO;
+ /* @Autowired
+  OrderDAO orderDao; */
 	
 	@Override
 	public GenericResponse SignupRequest(SignupUser userRequest) {
-		
-		userDAO.createUser(userRequest);
+		starbucksDAO.createUser(userRequest);
 		GenericResponse response = new GenericResponse("SUCCESS");
 		return response;
 	}
 
 	@Override
 	public UserDetailsDTO LoginRequest(LoginUser userLoginRequest) throws ValidationException {
-		UserDetailsDTO userDetailsDTO = userDAO.getUserDetails(userLoginRequest);
+		UserDetailsDTO userDetailsDTO = starbucksDAO.getUserDetails(userLoginRequest);
 		if (null == userDetailsDTO) {
 			throw new ValidationException("Invalid email Id/password");
 		}
@@ -86,7 +81,7 @@ public class StarbucksServiceImpl implements StarbucksService {
     return outputMessage;
   }
 
-  @Override
+  /*   @Override
   public StarbucksOutputMessage manageOrder(OrderRequest order) {
 
     StarbucksOutputMessage outputMessage = new StarbucksOutputMessage();
@@ -138,6 +133,6 @@ public class StarbucksServiceImpl implements StarbucksService {
       orderDescription.append(products.get(i).getProductName());
     }
     return orderDescription.toString();
-  }
+  } */
 
 }
