@@ -23,7 +23,7 @@ public class StarbucksController {
     @Autowired
     private StarbucksService starbucksService;
 
-    /User sign up request mapping
+    //User sign up request mapping
     @RequestMapping(value = "/userSignup", method = RequestMethod.POST, produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<GenericResponse> userSignup(@RequestBody SignupUser userRequest) {
@@ -54,7 +54,6 @@ public class StarbucksController {
 		return responseEntity;
 	}
     
-    //User login in request mapping
     @RequestMapping(value = "/addCards", method = RequestMethod.POST, produces = "application/json")
    	@ResponseBody
    	public StarbucksOutputMessage addCards(@RequestBody AddCardsRequest addCardsRequest) {

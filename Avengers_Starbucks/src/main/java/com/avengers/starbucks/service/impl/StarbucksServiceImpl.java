@@ -8,6 +8,12 @@ import com.avengers.starbucks.dto.StarbucksOutputMessage;
 import com.avengers.starbucks.model.Product;
 import com.avengers.starbucks.model.ProductRequest;
 import com.avengers.starbucks.service.StarbucksService;
+import com.harshit.sse.dao.UserInfo;
+import com.harshit.sse.dto.GenericResponse;
+import com.harshit.sse.dto.LoginUser;
+import com.harshit.sse.dto.SignupUser;
+import com.harshit.sse.dto.UserDetailsDTO;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +36,26 @@ public class StarbucksServiceImpl implements StarbucksService {
   @Autowired
   OrderDAO orderDao;
 
+  @Autowired
+  private UserInfo userDAO;
+	
+	@Override
+	public GenericResponse SignupRequest(SignupUser userRequest) {
+		
+		userDAO.createUser(userRequest);
+		GenericResponse response = new GenericResponse("SUCCESS");
+		return response;
+	}
+
+	@Override
+	public UserDetailsDTO LoginRequest(LoginUser userLoginRequest) throws ValidationException {
+		UserDetailsDTO userDetailsDTO = userDAO.getUserDetails(userLoginRequest);
+		if (null == userDetailsDTO) {
+			throw new ValidationException("Invalid email Id/password");
+		}
+		return userDetailsDTO;
+	}
+	
   @Override
   public StarbucksOutputMessage addCards(AddCardsRequest addCardsRequest) throws ValidationException {
 
