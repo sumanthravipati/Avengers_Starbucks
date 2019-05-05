@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -79,6 +80,45 @@ public class StarbucksDAOImpl implements StarbucksDAO{
 			addCardsList.add(addCardDetails);
 		}
 		return addCardsList;
+	}
+	
+	@Override
+	public float getCardBalance(String emailId, String cardNumber) {
+		float cardBalance = -999999999;
+		String cardBalanceStr = null;
+		String sql = "SELECT CardBalance FROM Starbucks_AddCards where EmailID = ? and CardNumber = ?";
+		try {
+			cardBalanceStr = (String) jdbcTemplate.queryForObject(sql, new Object[]{emailId, cardNumber}, String.class);
+		}catch(EmptyResultDataAccessException e) {
+			//e.printStackTrace();
+		}		
+		if(cardBalanceStr != null)
+			cardBalance = Float.parseFloat(cardBalanceStr);
+		return cardBalance;
+	}
+	
+	@Override
+	public float getOrderAmount(String emailId, int orderId) {
+		float orderAmount = -999999999;
+	//	String cardBalanceStr = null;
+		String sql = "SELECT Amount FROM Starbucks_Order where EmailID = ? and id = ?";
+		try {
+			orderAmount = jdbcTemplate.queryForObject(sql, new Object[]{emailId, orderId}, Float.class);
+		}catch(EmptyResultDataAccessException e) {
+			//e.printStackTrace();
+		}		
+		return orderAmount;
+	}
+	
+	@Override
+	public void updateOnSuccessfulPayment(String emailId, String cardNumber, int orderId, String new_balance) {
+		//UPDATE `starbucks`.`Starbucks_Order` SET `Amount` = '5' WHERE (`id` = '3');
+		String sql = "UPDATE Starbucks_AddCards SET CardBalance = ? WHERE EmailID = ? and CardNumber = ?";
+		jdbcTemplate.update(sql, new_balance, emailId, cardNumber);
+		
+		//set paid true in order table
+		String sql1 = "UPDATE Starbucks_Order SET Paid = ? WHERE id = ?";
+		jdbcTemplate.update(sql1, 1, orderId);
 	}
 	
 	@Override

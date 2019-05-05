@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,6 +14,7 @@ import com.avengers.starbucks.dto.AddCardsRequest;
 import com.avengers.starbucks.dto.GenericResponse;
 import com.avengers.starbucks.dto.LoginUser;
 import com.avengers.starbucks.dto.OrderRequest;
+import com.avengers.starbucks.dto.PaymentRequest;
 import com.avengers.starbucks.dto.SignupUser;
 import com.avengers.starbucks.dto.StarbucksOutputMessage;
 import com.avengers.starbucks.dto.UserDetailsDTO;
@@ -85,6 +87,20 @@ public class StarbucksController {
       }
 
       return starbucksService.manageOrder(orderRequest);
+    }
+    
+    
+  //order payment
+    @RequestMapping(value = "/doPayment", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    public StarbucksOutputMessage doOrderPaymnet(@RequestBody PaymentRequest paymentRequest) {
+    	String emailId = paymentRequest.getEmailId();
+    	String cardNumber = paymentRequest.getCardNumber();
+    	int orderId = paymentRequest.getOrderId();
+    	
+		// Add validation code on request params
+    	return starbucksService.doPayment(emailId, cardNumber, orderId);
+    	
     }
     
 }

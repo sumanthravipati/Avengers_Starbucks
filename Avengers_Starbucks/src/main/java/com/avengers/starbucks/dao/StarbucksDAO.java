@@ -27,4 +27,10 @@ public interface StarbucksDAO {
 	
 	UserDetailsDTO getUserDetails(LoginUser userLoginRequest) throws ValidationException;
 	
+	float getCardBalance(String emailId, String cardNumber);
+	
+	float getOrderAmount(String emailId, int orderId);
+	
+	void updateOnSuccessfulPayment(String emailId, String cardNumber, int orderId, String new_balance);
+	
 }
