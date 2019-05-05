@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestParam;
 
 //import com.avengers.starbucks.dao.OrderDAO;
 import com.avengers.starbucks.dao.StarbucksDAO;
@@ -67,7 +66,7 @@ public class StarbucksServiceImpl implements StarbucksService {
     //Logic to do the common Input validations if all the fields are non empty
     outputMessage = validationsUtil.addCardsInitialValidations(outputMessage, addCardsRequest);
     
-    if (outputMessage.getSuccessResponse().equalsIgnoreCase("Initial Validation Successfull")) {
+    if (outputMessage.getSuccessResponse() != null && outputMessage.getSuccessResponse().equalsIgnoreCase("Initial Validation Successfull")) {
     	
         //Scenario -1: Check if the Card Number and the Card Code contains only Digits
         String regex = "\\d+";
@@ -92,7 +91,7 @@ public class StarbucksServiceImpl implements StarbucksService {
         			cardCodeExists = true;
         		}
         	}
-        	if (cardNumberExists && cardCodeExists) {
+        	if (!cardNumberExists && !cardCodeExists) {
         		Map<String, String> response = starbucksDAO.insertCardDetails(addCardsRequest);
         		 if (response.get("status").equalsIgnoreCase("true")) {
                      outputMessage.setSuccessResponse("Card Successfully Added to the DB");
@@ -100,7 +99,7 @@ public class StarbucksServiceImpl implements StarbucksService {
                      outputMessage.setErrorResponse("Insert Card Details Unsuccessfull");
                    }
         	}else {
-        		outputMessage.setErrorResponse("Email ID not registered. Please register the user using sign up API");
+        		outputMessage.setErrorResponse("Card Number and Card Code already exists..");
         	}
           } else {
             //If the Card Number and Card Code doesn't match the length
