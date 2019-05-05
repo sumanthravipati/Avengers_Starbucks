@@ -20,13 +20,14 @@ import com.avengers.starbucks.dto.StarbucksOutputMessage;
 import com.avengers.starbucks.dto.UserDetailsDTO;
 import com.avengers.starbucks.exception.InvalidRequestException;
 import com.avengers.starbucks.service.StarbucksService;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 public class StarbucksController {
 
     @Autowired
     private StarbucksService starbucksService;
-    
+
   //User sign up request mapping
     @RequestMapping(value = "/userSignup", method = RequestMethod.POST, produces = "application/json")
 	@ResponseBody
@@ -42,7 +43,7 @@ public class StarbucksController {
 		}
 		return responseEntity;
 	}
-    
+
     //User login request mapping
     @RequestMapping(value = "/userLogin", method = RequestMethod.POST, produces = "application/json")
 	@ResponseBody
@@ -70,26 +71,25 @@ public class StarbucksController {
    		}
    		return response;
    	}
-    
+
     @RequestMapping(path = "/manageOrder", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public StarbucksOutputMessage manageOrder(@RequestBody OrderRequest orderRequest) {
-      if (orderRequest == null) {
-        throw new InvalidRequestException("Order can not be null");
-      }
 
       if (orderRequest.getProducts() == null || orderRequest.getProducts().isEmpty()) {
-        throw new InvalidRequestException("Ordered Items can not be empty");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            "Ordered Items can not be empty");
       }
 
       if (orderRequest.getEmailId() == null || orderRequest.getEmailId().trim().isEmpty()) {
-        throw new InvalidRequestException("EmailId can not be empty");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            "EmailId can not be empty");
       }
 
       return starbucksService.manageOrder(orderRequest);
     }
-    
-    
+
+
   //order payment
     @RequestMapping(value = "/doPayment", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
@@ -97,10 +97,10 @@ public class StarbucksController {
     	String emailId = paymentRequest.getEmailId();
     	String cardNumber = paymentRequest.getCardNumber();
     	int orderId = paymentRequest.getOrderId();
-    	
+
 		// Add validation code on request params
     	return starbucksService.doPayment(emailId, cardNumber, orderId);
-    	
+
     }
-    
+
 }
