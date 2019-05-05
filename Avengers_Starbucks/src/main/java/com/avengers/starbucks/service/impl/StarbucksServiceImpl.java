@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestParam;
 
 //import com.avengers.starbucks.dao.OrderDAO;
 import com.avengers.starbucks.dao.StarbucksDAO;
@@ -146,6 +147,31 @@ public class StarbucksServiceImpl implements StarbucksService {
     }
 
     return outputMessage;
+  }
+  
+  @Override
+  public StarbucksOutputMessage doPayment(String emailId, String cardNumber, int orderId) {
+	  StarbucksOutputMessage response = new StarbucksOutputMessage();
+      float bal = starbucksDAO.getCardBalance(emailId, cardNumber);
+      System.out.println("balance  " + bal);
+      if(bal == -999999999) {
+    	  response.setErrorResponse("Card not found.Please add card or provide the right card number");
+    	  return response;
+      }
+      float orderAmount = starbucksDAO.getOrderAmount(emailId, orderId);
+      if(orderAmount == -999999999) {
+    	  response.setErrorResponse("No Order Found to make payment");
+    	  return response;
+      }
+      
+      if (orderAmount > bal) {
+    	  response.setErrorResponse("Insufficient Balance");
+    	  return response;
+      }
+      Float new_balance = bal - orderAmount;
+      starbucksDAO.updateOnSuccessfulPayment(emailId, cardNumber, orderId, new_balance.toString());
+      response.setSuccessResponse("Payment was Successfull. The new balance is: "+new_balance);
+	  return response;
   }
 
   private float calcBillAmt(List<Product> products, List<ProductRequest> orderedProducts) {
