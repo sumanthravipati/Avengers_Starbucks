@@ -120,13 +120,15 @@ public class StarbucksDAOImpl implements StarbucksDAO{
 		String sql1 = "UPDATE Starbucks_Order SET Paid = ? WHERE id = ?";
 		jdbcTemplate.update(sql1, 1, orderId);
 	}
-	
+
 	@Override
-	  public boolean insertOrder(String emailId, String orderDescription, float billingAmt) {
-	    String sql = "INSERT INTO " + TABLE_ORDER + " (EmailID, Description, Amount, Paid)"
-	        + " VALUES (?, ?, ?, ?)";
-	    return jdbcTemplate.update(sql, emailId, orderDescription, billingAmt, false) > 0;
-	  }
+	public boolean insertOrder(String emailId, String orderDescription,
+														 float billingAmt, String qty) {
+		String sql = "INSERT INTO " + TABLE_ORDER + " (EmailID, Description, " +
+				"Amount, Paid, Qty) VALUES (?, ?, ?, ?, ?)";
+		return jdbcTemplate
+				.update(sql, emailId, orderDescription, billingAmt, false, qty) > 0;
+	}
 
 	  @Override
 	  public Product getProductDetail(int productId) {

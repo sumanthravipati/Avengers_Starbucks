@@ -16,8 +16,9 @@ public interface StarbucksDAO {
 	Map<String, String> insertCardDetails(AddCardsRequest addCardsRequest);
 	
 	List<AddCardsRequest> getCardDetails(String emailId);
-	
-	boolean insertOrder(String emailId, String orderDescription, float billingAmt);
+
+	boolean insertOrder(String emailId, String orderDescription,
+											float billingAmt, String qty);
 
 	Product getProductDetail(int productId);
 
