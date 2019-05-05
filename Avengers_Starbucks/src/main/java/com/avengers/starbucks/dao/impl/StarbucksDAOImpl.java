@@ -11,13 +11,18 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.avengers.starbucks.dao.StarbucksDAO;
+import com.avengers.starbucks.db.ProductRowMapper;
 import com.avengers.starbucks.dto.AddCardsRequest;
+import com.avengers.starbucks.model.Product;
 
 @Repository("mysql")
 public class StarbucksDAOImpl implements StarbucksDAO{
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
+	
+	private final String TABLE_PRODUCT = "Starbucks_Product";
+	private final String TABLE_ORDER = "Starbucks_Order";
 
 
 	@Override
@@ -66,5 +71,28 @@ public class StarbucksDAOImpl implements StarbucksDAO{
 		}
 		return addCardsList;
 	}
+	
+	@Override
+	  public boolean insertOrder(String emailId, String orderDescription, float billingAmt) {
+	    String sql = "INSERT INTO " + TABLE_ORDER + " (EmailID, Description, Amount, Paid)"
+	        + " VALUES (?, ?, ?, ?)";
+	    return jdbcTemplate.update(sql, emailId, orderDescription, billingAmt, false) > 0;
+	  }
+
+	  @Override
+	  public Product getProductDetail(int productId) {
+	    String query = "Select * from " + TABLE_PRODUCT + " where id = ?";
+	    List<Product> products = jdbcTemplate.query(query, new Object[]{productId}, new ProductRowMapper());
+	    if (products.isEmpty()) {
+	      return null;
+	    } else {
+	      return products.get(0);
+	    }
+	  }
+
+	  @Override
+	  public void updateStock(int productId, int quantity) {
+
+	  }
 
 }

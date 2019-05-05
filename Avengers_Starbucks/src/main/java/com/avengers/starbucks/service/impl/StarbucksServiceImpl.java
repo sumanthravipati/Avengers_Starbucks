@@ -1,6 +1,6 @@
 package com.avengers.starbucks.service.impl;
 
-import com.avengers.starbucks.dao.OrderDAO;
+//import com.avengers.starbucks.dao.OrderDAO;
 import com.avengers.starbucks.dao.StarbucksDAO;
 import com.avengers.starbucks.dto.AddCardsRequest;
 import com.avengers.starbucks.dto.OrderRequest;
@@ -29,8 +29,8 @@ public class StarbucksServiceImpl implements StarbucksService {
   @Autowired
   StarbucksDAO starbucksDAO;
 
-  @Autowired
-  OrderDAO orderDao;
+  //@Autowired
+  //OrderDAO orderDao;
   
   @Autowired
   ValidationsUtil validationsUtil;
@@ -101,7 +101,7 @@ public class StarbucksServiceImpl implements StarbucksService {
 
     for (int i = 0; i < order.getProducts().size(); i++) {
       ProductRequest productReq = order.getProducts().get(i);
-      Product product = orderDao.getProductDetail(productReq.getProductId());
+      Product product = starbucksDAO.getProductDetail(productReq.getProductId());
       if (product != null) {
         if (!(product.getQty() >= productReq.getQty())) {
           outputMessage.setErrorResponse("Product not in stock");
@@ -118,7 +118,7 @@ public class StarbucksServiceImpl implements StarbucksService {
     logger.error("Description : " + orderDescription);
     float billingAmt = calcBillAmt(products, order.getProducts());
 
-    if (orderDao.insertOrder(order.getEmailId(), orderDescription, billingAmt)) {
+    if (starbucksDAO.insertOrder(order.getEmailId(), orderDescription, billingAmt)) {
       outputMessage.setSuccessResponse("Order Placed Successfully.");
     } else {
       outputMessage.setErrorResponse("Can not place order!!");

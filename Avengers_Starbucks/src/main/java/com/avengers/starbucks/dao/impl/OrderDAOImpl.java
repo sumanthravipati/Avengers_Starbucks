@@ -1,4 +1,4 @@
-package com.avengers.starbucks.dao.impl;
+/*package com.avengers.starbucks.dao.impl;
 
 import com.avengers.starbucks.dao.OrderDAO;
 import com.avengers.starbucks.db.ProductRowMapper;
@@ -39,4 +39,4 @@ public class OrderDAOImpl implements OrderDAO {
   public void updateStock(int productId, int quantity) {
 
   }
-}
+}*/

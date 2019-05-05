@@ -1,8 +1,11 @@
 package com.avengers.starbucks.validations.util;
 
+import org.springframework.stereotype.Component;
+
 import com.avengers.starbucks.dto.AddCardsRequest;
 import com.avengers.starbucks.dto.StarbucksOutputMessage;
 
+@Component
 public class ValidationsUtil {
 	
 	public StarbucksOutputMessage addCardsInitialValidations(StarbucksOutputMessage outputMessage, AddCardsRequest addCardsRequest) {
