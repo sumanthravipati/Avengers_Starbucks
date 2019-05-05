@@ -1,24 +1,29 @@
 package com.avengers.starbucks.service.impl;
 
-//import com.avengers.starbucks.dao.OrderDAO;
-import com.avengers.starbucks.dao.StarbucksDAO;
-import com.avengers.starbucks.dto.AddCardsRequest;
-import com.avengers.starbucks.dto.OrderRequest;
-import com.avengers.starbucks.dto.StarbucksOutputMessage;
-import com.avengers.starbucks.model.Product;
-import com.avengers.starbucks.model.ProductRequest;
-import com.avengers.starbucks.service.StarbucksService;
-import com.avengers.starbucks.validations.util.ValidationsUtil;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.bind.ValidationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.xml.bind.ValidationException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+//import com.avengers.starbucks.dao.OrderDAO;
+import com.avengers.starbucks.dao.StarbucksDAO;
+import com.avengers.starbucks.dto.AddCardsRequest;
+import com.avengers.starbucks.dto.GenericResponse;
+import com.avengers.starbucks.dto.LoginUser;
+import com.avengers.starbucks.dto.OrderRequest;
+import com.avengers.starbucks.dto.SignupUser;
+import com.avengers.starbucks.dto.StarbucksOutputMessage;
+import com.avengers.starbucks.dto.UserDetailsDTO;
+import com.avengers.starbucks.model.Product;
+import com.avengers.starbucks.model.ProductRequest;
+import com.avengers.starbucks.service.StarbucksService;
+import com.avengers.starbucks.validations.util.ValidationsUtil;
 
 
 @Component
@@ -34,6 +39,22 @@ public class StarbucksServiceImpl implements StarbucksService {
   
   @Autowired
   ValidationsUtil validationsUtil;
+  
+  @Override
+	public GenericResponse SignupRequest(SignupUser userRequest) {
+		starbucksDAO.createUser(userRequest);
+		GenericResponse response = new GenericResponse("SUCCESS");
+		return response;
+	}
+
+	@Override
+	public UserDetailsDTO LoginRequest(LoginUser userLoginRequest) throws ValidationException {
+		UserDetailsDTO userDetailsDTO = starbucksDAO.getUserDetails(userLoginRequest);
+		if (null == userDetailsDTO) {
+			throw new ValidationException("Invalid email Id/password");
+		}
+		return userDetailsDTO;
+	}
 
   @Override
   public StarbucksOutputMessage addCards(AddCardsRequest addCardsRequest) throws ValidationException {
