@@ -1,4 +1,4 @@
-package com.avengers.starbucks.dao;
+/*package com.avengers.starbucks.dao;
 
 import com.avengers.starbucks.model.Product;
 
@@ -10,4 +10,4 @@ public interface OrderDAO {
 
   void updateStock(int productId, int quantity);
 
-}
+}*/

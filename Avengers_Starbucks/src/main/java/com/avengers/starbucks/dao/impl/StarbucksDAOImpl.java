@@ -1,23 +1,37 @@
 
 package com.avengers.starbucks.dao.impl;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.avengers.starbucks.dao.StarbucksDAO;
+import com.avengers.starbucks.db.ProductRowMapper;
 import com.avengers.starbucks.dto.AddCardsRequest;
+import com.avengers.starbucks.dto.LoginUser;
+import com.avengers.starbucks.dto.SignupUser;
+import com.avengers.starbucks.dto.UserDetailsDTO;
+import com.avengers.starbucks.model.Product;
 
 @Repository("mysql")
 public class StarbucksDAOImpl implements StarbucksDAO{
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
+	
+	private final String TABLE_PRODUCT = "Starbucks_Product";
+	private final String TABLE_ORDER = "Starbucks_Order";
+	
+	String passwordToHash = "password";
+    String generatedPassword = null;
 
 
 	@Override
@@ -66,5 +80,99 @@ public class StarbucksDAOImpl implements StarbucksDAO{
 		}
 		return addCardsList;
 	}
+	
+	@Override
+	  public boolean insertOrder(String emailId, String orderDescription, float billingAmt) {
+	    String sql = "INSERT INTO " + TABLE_ORDER + " (EmailID, Description, Amount, Paid)"
+	        + " VALUES (?, ?, ?, ?)";
+	    return jdbcTemplate.update(sql, emailId, orderDescription, billingAmt, false) > 0;
+	  }
+
+	  @Override
+	  public Product getProductDetail(int productId) {
+	    String query = "Select * from " + TABLE_PRODUCT + " where id = ?";
+	    List<Product> products = jdbcTemplate.query(query, new Object[]{productId}, new ProductRowMapper());
+	    if (products.isEmpty()) {
+	      return null;
+	    } else {
+	      return products.get(0);
+	    }
+	  }
+
+	  @Override
+	  public void updateStock(int productId, int quantity) {
+
+	  }
+	  
+	  @Override
+		public void createUser(SignupUser userRequest) {
+			
+			String sql = "INSERT INTO Profile_Info (First_Name, Last_Name, Email_Id, Password) VALUES (?, ?, ?, ?)";
+			
+			passwordToHash = userRequest.getPassword();
+			
+			try {
+	            // Create MessageDigest instance for MD5
+	            MessageDigest md = MessageDigest.getInstance("MD5");
+	            //Add password bytes to digest
+	            md.update(passwordToHash.getBytes());
+	            //Get the hash's bytes
+	            byte[] bytes = md.digest();
+	            //This bytes[] has bytes in decimal format;
+	            //Convert it to hexadecimal format
+	            StringBuilder sb = new StringBuilder();
+	            for(int i=0; i< bytes.length ;i++)
+	            {
+	                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+	            }
+	            //Get complete hashed password in hex format
+	            generatedPassword = sb.toString();
+	        }
+	        catch (NoSuchAlgorithmException e)
+	        {
+	            e.printStackTrace();
+	        }
+			
+			jdbcTemplate.update(sql, userRequest.getFirstName(), userRequest.getLastName(), 
+					userRequest.getEmailId(),generatedPassword );
+		}
+
+		@Override
+		public UserDetailsDTO getUserDetails(LoginUser userLoginRequest) {
+			
+			String sql = "SELECT * FROM Profile_Info WHERE Email_Id = ? AND Password = ?";
+			
+			String pwd = userLoginRequest.getPassword();
+			String check = null;
+			
+			try {
+	            // Create MessageDigest instance for MD5
+	            MessageDigest md = MessageDigest.getInstance("MD5");
+	            //Add password bytes to digest
+	            md.update(pwd.getBytes());
+	            //Get the hash's bytes
+	            byte[] bytes = md.digest();
+	            //This bytes[] has bytes in decimal format;
+	            //Convert it to hexadecimal format
+	            StringBuilder sb = new StringBuilder();
+	            for(int i=0; i< bytes.length ;i++)
+	            {
+	                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+	            }
+	            //Get complete hashed password in hex format
+	            check = sb.toString();
+	        }
+	        catch (NoSuchAlgorithmException e)
+	        {
+	            e.printStackTrace();
+	        }
+			
+			
+			
+			UserDetailsDTO userDetailsDTO = (UserDetailsDTO) jdbcTemplate.queryForObject(
+					sql, new Object[] { userLoginRequest.getEmailId(), check }, 
+					new BeanPropertyRowMapper(UserDetailsDTO.class));
+			return userDetailsDTO;
+		}
 
 }
