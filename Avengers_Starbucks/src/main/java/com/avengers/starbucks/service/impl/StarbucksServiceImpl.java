@@ -124,7 +124,7 @@ public class StarbucksServiceImpl implements StarbucksService {
 		UserDetailsDTO userDetailsDTO = new UserDetailsDTO();
 		userLoginRequest.setEmailId(emailEntered);
 		try {
-			userDetailsDTO = starbucksDAO.getUserDetails(userLoginRequest);
+			userDetailsDTO = starbucksDAO.getUserDetails(userLoginRequest.getEmailId());
 		} catch (ValidationException e) {
 			e.printStackTrace();
 		}
@@ -135,7 +135,7 @@ public class StarbucksServiceImpl implements StarbucksService {
 	@Override
 	public GenericResponse LoginRequest(LoginUser userLoginRequest) throws ValidationException {
 		GenericResponse msg = new GenericResponse();
-		UserDetailsDTO userDetailsDTO = starbucksDAO.getUserDetails(userLoginRequest);
+		UserDetailsDTO userDetailsDTO = starbucksDAO.getUserDetails(userLoginRequest.getEmailId());
 		String actaulPswd = userDetailsDTO.getPassword();
 		String pwd = userLoginRequest.getPassword();
 		String check = null;
@@ -183,7 +183,7 @@ public class StarbucksServiceImpl implements StarbucksService {
     //Logic to do the common Input validations if all the fields are non empty
     outputMessage = validationsUtil.addCardsInitialValidations(outputMessage, addCardsRequest);
     
-    if (outputMessage.getSuccessResponse() != null && outputMessage.getSuccessResponse().equalsIgnoreCase("Initial Validation Successfull")) {
+    if (outputMessage.getErrorResponse() == null) {
     	
         //Scenario -1: Check if the Card Number and the Card Code contains only Digits
         String regex = "\\d+";
@@ -193,31 +193,33 @@ public class StarbucksServiceImpl implements StarbucksService {
           if (addCardsRequest.getCardNumber().length() == 9 && addCardsRequest.getCardCode().length() == 3) {
         	  
         	//Logic to get the Sign up table details to validate the Email ID of the user is already registered
-        	 //Use -  the harshit get method to get the details instead of creating new one
+        	  UserDetailsDTO userDetails = starbucksDAO.getUserDetails(addCardsRequest.getEmailId());
           	
-          	//Logic to iterate the results from DB and match the email ID from DB with add card api email id
-        	  
         	//If the Email ID matches then proceed with adding up the card to DB
-          	
-        	//Logic -- first get the ADD card table details to check whether there is any duplicate then only insert new records
-        	List<AddCardsRequest> addCardslist = starbucksDAO.getCardDetails(addCardsRequest.getEmailId());
-        	for(AddCardsRequest eachCardDetail : addCardslist) {
-        		if (eachCardDetail.getCardNumber().equalsIgnoreCase(addCardsRequest.getCardNumber()) && 
-        				eachCardDetail.getCardCode().equalsIgnoreCase(addCardsRequest.getCardCode())) {
-        			cardNumberExists = true;
-        			cardCodeExists = true;
-        		}
-        	}
-        	if (!cardNumberExists && !cardCodeExists) {
-        		Map<String, String> response = starbucksDAO.insertCardDetails(addCardsRequest);
-        		 if (response.get("status").equalsIgnoreCase("true")) {
-                     outputMessage.setSuccessResponse("Card Successfully Added to the DB");
-                   } else {
-                     outputMessage.setErrorResponse("Insert Card Details Unsuccessfull");
-                   }
-        	}else {
-        		outputMessage.setErrorResponse("Card Number and Card Code already exists..");
-        	}
+        	  if (userDetails.getEmailId() != null && userDetails.getEmailId().equalsIgnoreCase(addCardsRequest.getEmailId())){
+        		  
+        		//Logic -- first get the ADD card table details to check whether there is any duplicate then only insert new records
+              	List<AddCardsRequest> addCardslist = starbucksDAO.getCardDetails(addCardsRequest.getEmailId());
+              	for(AddCardsRequest eachCardDetail : addCardslist) {
+              		if (eachCardDetail.getCardNumber().equalsIgnoreCase(addCardsRequest.getCardNumber()) && 
+              				eachCardDetail.getCardCode().equalsIgnoreCase(addCardsRequest.getCardCode())) {
+              			cardNumberExists = true;
+              			cardCodeExists = true;
+              		}
+              	}
+              	if (!cardNumberExists && !cardCodeExists) {
+              		Map<String, String> response = starbucksDAO.insertCardDetails(addCardsRequest);
+              		 if (response.get("status").equalsIgnoreCase("true")) {
+                           outputMessage.setSuccessResponse("Card Successfully Added to the DB");
+                         } else {
+                           outputMessage.setErrorResponse("Insert Card Details Unsuccessfull");
+                         }
+              	}else {
+              		outputMessage.setErrorResponse("Card Number and Card Code already exists..");
+              	}
+        	  }else {
+        		  outputMessage.setErrorResponse("Email ID not registered. Please register the user using sign up API");
+        	  }
           } else {
             //If the Card Number and Card Code doesn't match the length
             outputMessage.setErrorResponse("Card Number length should be 9 and Card Code length should be 3 exactly");

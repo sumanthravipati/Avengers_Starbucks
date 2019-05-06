@@ -159,14 +159,14 @@ public class StarbucksDAOImpl implements StarbucksDAO{
 		}
 
 		@Override
-		public UserDetailsDTO getUserDetails(LoginUser userLoginRequest) {
+		public UserDetailsDTO getUserDetails(String emailID) {
 			
 			String sql = "SELECT * FROM Profile_Info WHERE Email_Id = ?";
 			UserDetailsDTO userDetailsDTO = new UserDetailsDTO();
 			
 			try { 
 				userDetailsDTO = (UserDetailsDTO) jdbcTemplate.queryForObject(
-					sql, new Object[] { userLoginRequest.getEmailId()}, 
+					sql, new Object[] {emailID}, 
 					new BeanPropertyRowMapper(UserDetailsDTO.class));
 			} catch(EmptyResultDataAccessException e) {
 				e.printStackTrace();

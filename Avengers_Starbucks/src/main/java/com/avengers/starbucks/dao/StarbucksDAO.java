@@ -26,7 +26,7 @@ public interface StarbucksDAO {
 	
 	GenericResponse createUser(SignupUser userRequest);
 	
-	UserDetailsDTO getUserDetails(LoginUser userLoginRequest) throws ValidationException;
+	UserDetailsDTO getUserDetails(String emailID) throws ValidationException;
 	
 	float getCardBalance(String emailId, String cardNumber);
 	
