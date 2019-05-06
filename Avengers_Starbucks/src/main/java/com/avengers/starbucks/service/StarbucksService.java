@@ -18,7 +18,9 @@ public interface StarbucksService{
 	
 	GenericResponse SignupRequest(SignupUser userRequest);
     
-    UserDetailsDTO LoginRequest(LoginUser userLoginRequest) throws ValidationException;
+    GenericResponse LoginRequest(LoginUser userLoginRequest) throws ValidationException;
     
     StarbucksOutputMessage doPayment(String emailId, String cardNumber, int orderId);
+
+	boolean checkduplicate();
 }

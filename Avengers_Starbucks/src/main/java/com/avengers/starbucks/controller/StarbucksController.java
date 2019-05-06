@@ -35,7 +35,6 @@ public class StarbucksController {
 		ResponseEntity<GenericResponse> responseEntity = null;
 		try {
 			GenericResponse response = this.starbucksService.SignupRequest(userRequest);
-			response.setMessage("User Sign Up Successful");
 			responseEntity = new ResponseEntity<GenericResponse>(response, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -47,14 +46,14 @@ public class StarbucksController {
     //User login request mapping
     @RequestMapping(value = "/userLogin", method = RequestMethod.POST, produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<UserDetailsDTO> userLogin(@RequestBody LoginUser userLoginRequest) {
-		ResponseEntity<UserDetailsDTO> responseEntity = null;
+	public ResponseEntity<GenericResponse> userLogin(@RequestBody LoginUser userLoginRequest) {
+		ResponseEntity<GenericResponse> responseEntity = null;
 		try {
-			UserDetailsDTO response = this.starbucksService.LoginRequest(userLoginRequest);
-			responseEntity = new ResponseEntity<UserDetailsDTO>(response, HttpStatus.OK);
+			GenericResponse response = this.starbucksService.LoginRequest(userLoginRequest);
+			responseEntity = new ResponseEntity<GenericResponse>(response, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			responseEntity = new ResponseEntity<UserDetailsDTO>(new UserDetailsDTO(), HttpStatus.EXPECTATION_FAILED);
+			responseEntity = new ResponseEntity<GenericResponse>(new GenericResponse(), HttpStatus.EXPECTATION_FAILED);
 		}
 		return responseEntity;
 	}

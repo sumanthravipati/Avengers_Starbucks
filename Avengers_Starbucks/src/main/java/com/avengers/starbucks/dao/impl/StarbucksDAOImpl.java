@@ -21,6 +21,7 @@ import com.avengers.starbucks.dto.LoginUser;
 import com.avengers.starbucks.dto.SignupUser;
 import com.avengers.starbucks.dto.UserDetailsDTO;
 import com.avengers.starbucks.model.Product;
+import com.avengers.starbucks.dto.GenericResponse;
 
 @Repository("mysql")
 public class StarbucksDAOImpl implements StarbucksDAO{
@@ -147,74 +148,32 @@ public class StarbucksDAOImpl implements StarbucksDAO{
 	  }
 	  
 	  @Override
-		public void createUser(SignupUser userRequest) {
-			
+		public GenericResponse createUser(SignupUser userRequest) {
+			GenericResponse msg = new GenericResponse();
 			String sql = "INSERT INTO Profile_Info (First_Name, Last_Name, Email_Id, Password) VALUES (?, ?, ?, ?)";
 			
-			passwordToHash = userRequest.getPassword();
-			
-			try {
-	            // Create MessageDigest instance for MD5
-	            MessageDigest md = MessageDigest.getInstance("MD5");
-	            //Add password bytes to digest
-	            md.update(passwordToHash.getBytes());
-	            //Get the hash's bytes
-	            byte[] bytes = md.digest();
-	            //This bytes[] has bytes in decimal format;
-	            //Convert it to hexadecimal format
-	            StringBuilder sb = new StringBuilder();
-	            for(int i=0; i< bytes.length ;i++)
-	            {
-	                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
-	            }
-	            //Get complete hashed password in hex format
-	            generatedPassword = sb.toString();
-	        }
-	        catch (NoSuchAlgorithmException e)
-	        {
-	            e.printStackTrace();
-	        }
-			
 			jdbcTemplate.update(sql, userRequest.getFirstName(), userRequest.getLastName(), 
-					userRequest.getEmailId(),generatedPassword );
+					userRequest.getEmailId(),userRequest.getPassword());
+		
+			msg.setMessage("User Signup Successful");
+			
+	        return msg;
 		}
 
 		@Override
-		public UserDetailsDTO getUserDetails(LoginUser userLoginRequest) {
+		public UserDetailsDTO getUserDetails(String emailID) {
 			
-			String sql = "SELECT * FROM Profile_Info WHERE Email_Id = ? AND Password = ?";
+			String sql = "SELECT * FROM Profile_Info WHERE Email_Id = ?";
+			UserDetailsDTO userDetailsDTO = new UserDetailsDTO();
 			
-			String pwd = userLoginRequest.getPassword();
-			String check = null;
-			
-			try {
-	            // Create MessageDigest instance for MD5
-	            MessageDigest md = MessageDigest.getInstance("MD5");
-	            //Add password bytes to digest
-	            md.update(pwd.getBytes());
-	            //Get the hash's bytes
-	            byte[] bytes = md.digest();
-	            //This bytes[] has bytes in decimal format;
-	            //Convert it to hexadecimal format
-	            StringBuilder sb = new StringBuilder();
-	            for(int i=0; i< bytes.length ;i++)
-	            {
-	                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
-	            }
-	            //Get complete hashed password in hex format
-	            check = sb.toString();
-	        }
-	        catch (NoSuchAlgorithmException e)
-	        {
-	            e.printStackTrace();
-	        }
-			
-			
-			
-			UserDetailsDTO userDetailsDTO = (UserDetailsDTO) jdbcTemplate.queryForObject(
-					sql, new Object[] { userLoginRequest.getEmailId(), check }, 
+			try { 
+				userDetailsDTO = (UserDetailsDTO) jdbcTemplate.queryForObject(
+					sql, new Object[] {emailID}, 
 					new BeanPropertyRowMapper(UserDetailsDTO.class));
-			return userDetailsDTO;
+			} catch(EmptyResultDataAccessException e) {
+				e.printStackTrace();
+			}
+			return userDetailsDTO ;
 		}
 
 }
