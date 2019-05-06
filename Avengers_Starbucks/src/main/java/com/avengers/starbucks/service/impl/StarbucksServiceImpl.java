@@ -1,8 +1,11 @@
 package com.avengers.starbucks.service.impl;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.xml.bind.ValidationException;
 
@@ -30,6 +33,7 @@ import com.avengers.starbucks.validations.util.ValidationsUtil;
 public class StarbucksServiceImpl implements StarbucksService {
 
   Logger logger = LoggerFactory.getLogger(StarbucksServiceImpl.class);
+  public String emailEntered = null;
 
   @Autowired
   StarbucksDAO starbucksDAO;
@@ -42,19 +46,132 @@ public class StarbucksServiceImpl implements StarbucksService {
   
   @Override
 	public GenericResponse SignupRequest(SignupUser userRequest) {
-		starbucksDAO.createUser(userRequest);
-		GenericResponse response = new GenericResponse("SUCCESS");
-		return response;
+		
+		GenericResponse msg = new GenericResponse();
+		String passwordToHash = "password";
+	    String generatedPassword = null;
+	    String fn = null;
+	    String ln = null;
+	    String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+ 
+	            "[a-zA-Z0-9_+&*-]+)*@" + 
+	            "(?:[a-zA-Z0-9-]+\\.)+[a-z" + 
+	            "A-Z]{2,7}$";
+		
+	    passwordToHash = userRequest.getPassword();
+		emailEntered = userRequest.getEmailId();
+		fn = userRequest.getFirstName();
+		ln = userRequest.getLastName();
+		
+		if(fn.equals("") || ln.equals("") || emailEntered.equals("") || passwordToHash.equals("")) {
+			msg.setMessage("Please enter all the required details");
+			return msg;
+		}
+		
+		if(checkduplicate()) {
+			msg.setMessage("EmailId is already registerd");
+			return msg;
+		}
+			
+		Pattern pat = Pattern.compile(emailRegex); 
+      if (pat.matcher(emailEntered).matches()) {
+		
+		try {
+          // Create MessageDigest instance for MD5
+          MessageDigest md = MessageDigest.getInstance("MD5");
+          //Add password bytes to digest
+          md.update(passwordToHash.getBytes());
+          //Get the hash's bytes
+          byte[] bytes = md.digest();
+          //This bytes[] has bytes in decimal format;
+          //Convert it to hexadecimal format
+          StringBuilder sb = new StringBuilder();
+          for(int i=0; i< bytes.length ;i++)
+          {
+              sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+          }
+          //Get complete hashed password in hex format
+          generatedPassword = sb.toString();
+          userRequest.setPassword(generatedPassword);
+          msg = starbucksDAO.createUser(userRequest);
+      }
+      catch (NoSuchAlgorithmException e)
+      {
+          e.printStackTrace();
+          msg.setMessage("Please try Signing up again");
+      }
+	}
+      else {
+      	msg.setMessage("Enter a valid Email Id to register");
+      	return msg;
+      }
+      
+		//GenericResponse response = new GenericResponse("SUCCESS");
+		return msg;
 	}
 
-	@Override
+	/* @Override
 	public UserDetailsDTO LoginRequest(LoginUser userLoginRequest) throws ValidationException {
-		UserDetailsDTO userDetailsDTO = starbucksDAO.getUserDetails(userLoginRequest);
+		UserDetailsDTO userDetailsDTO = userDAO.getUserDetails(userLoginRequest);
 		if (null == userDetailsDTO) {
 			throw new ValidationException("Invalid email Id/password");
 		}
 		return userDetailsDTO;
+	} */
+	
+	@Override
+	public boolean checkduplicate() {
+		LoginUser userLoginRequest = new LoginUser();
+		UserDetailsDTO userDetailsDTO = new UserDetailsDTO();
+		userLoginRequest.setEmailId(emailEntered);
+		try {
+			userDetailsDTO = starbucksDAO.getUserDetails(userLoginRequest);
+		} catch (ValidationException e) {
+			e.printStackTrace();
+		}
+		return emailEntered.equals(userDetailsDTO.getEmailId());
 	}
+	
+	
+	@Override
+	public GenericResponse LoginRequest(LoginUser userLoginRequest) throws ValidationException {
+		GenericResponse msg = new GenericResponse();
+		UserDetailsDTO userDetailsDTO = starbucksDAO.getUserDetails(userLoginRequest);
+		String actaulPswd = userDetailsDTO.getPassword();
+		String pwd = userLoginRequest.getPassword();
+		String check = null;
+		
+		try {
+          // Create MessageDigest instance for MD5
+          MessageDigest md = MessageDigest.getInstance("MD5");
+          //Add password bytes to digest
+          md.update(pwd.getBytes());
+          //Get the hash's bytes
+          byte[] bytes = md.digest();
+          //This bytes[] has bytes in decimal format;
+          //Convert it to hexadecimal format
+          StringBuilder sb = new StringBuilder();
+          for(int i=0; i< bytes.length ;i++)
+          {
+              sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+          }
+          //Get complete hashed password in hex format
+          check = sb.toString();
+      }
+      catch (NoSuchAlgorithmException e)
+      {
+          e.printStackTrace();
+      }
+		
+		if(check.equals(actaulPswd)) {
+			msg.setMessage("Login Successful");
+		}
+		else {
+			msg.setMessage("Invalid email Id/password");
+		}
+		
+		return msg;
+
+} 
 
   @Override
   public StarbucksOutputMessage addCards(AddCardsRequest addCardsRequest) throws ValidationException {
