@@ -222,49 +222,49 @@ public class StarbucksServiceImpl implements StarbucksService {
 
 
   @Override
-  public StarbucksOutputMessage manageOrder(OrderRequest order) {
+  public StarbucksOutputMessage manageOrder(OrderRequest order) throws ValidationException {
 
     StarbucksOutputMessage outputMessage = new StarbucksOutputMessage();
     List<Product> products = new ArrayList<>();
 
-    //TODO : check user exists
-//    if (userExists(order.getEmailId())) {
+    // Check user already registered or not
 
-    Iterator<ProductRequest> it = order.getProducts().iterator();
-    while (it.hasNext()) {
-      ProductRequest orderedProduct = it.next();
-      Product product = starbucksDAO.getProductDetail(orderedProduct.getProductId());
-      if (product != null) {
-        if (!(product.getQty() >= orderedProduct.getQty())) {
-          outputMessage.setErrorResponse("Product not in stock");
+    UserDetailsDTO userDetails = starbucksDAO.getUserDetails(order.getEmailId());
+    if (userDetails.getEmailId() != null && userDetails.getEmailId().trim().length() > 0) {
+      Iterator<ProductRequest> it = order.getProducts().iterator();
+      while (it.hasNext()) {
+        ProductRequest orderedProduct = it.next();
+        Product product = starbucksDAO.getProductDetail(orderedProduct.getProductId());
+        if (product != null) {
+          if (!(product.getQty() >= orderedProduct.getQty())) {
+            outputMessage.setErrorResponse("Product not in stock");
+            return outputMessage;
+          }
+          products.add(product);
+        } else {
+          it.remove();
+          outputMessage.setErrorResponse("Invalid ProductID, can not place order !!");
           return outputMessage;
         }
-        products.add(product);
-      } else {
-        it.remove();
-        outputMessage.setErrorResponse("Invalid ProductID, can not place order !!");
-        return outputMessage;
       }
-    }
 
-    String orderDescription = generateIdDescription(products);
-    logger.error("Description : " + orderDescription);
+      String orderDescription = generateIdDescription(products);
+      logger.error("Description : " + orderDescription);
 
-    String qtyDescription = generateQtyCSV(order.getProducts());
-    logger.error("Qty Description : " + qtyDescription);
+      String qtyDescription = generateQtyCSV(order.getProducts());
+      logger.error("Qty Description : " + qtyDescription);
 
-    float billingAmt = calcBillAmt(products, order.getProducts());
+      float billingAmt = calcBillAmt(products, order.getProducts());
 
-    if (starbucksDAO
-        .insertOrder(order.getEmailId(), orderDescription, billingAmt, qtyDescription)) {
-      outputMessage.setSuccessResponse("Order Placed Successfully.");
+      if (starbucksDAO
+          .insertOrder(order.getEmailId(), orderDescription, billingAmt, qtyDescription)) {
+        outputMessage.setSuccessResponse("Order Placed Successfully.");
+      } else {
+        outputMessage.setErrorResponse("Can not place order!!");
+      }
     } else {
-      outputMessage.setErrorResponse("Can not place order!!");
+      outputMessage.setErrorResponse("Invalid EmailId. User does not exists !!");
     }
-//    }
-//    else {
-//      outputMessage.setErrorResponse("Invalid EmailId. User does not exists !!");
-//    }
 
     return outputMessage;
   }
