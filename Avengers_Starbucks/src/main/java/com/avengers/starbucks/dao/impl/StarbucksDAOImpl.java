@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -20,6 +21,7 @@ import com.avengers.starbucks.dto.LoginUser;
 import com.avengers.starbucks.dto.SignupUser;
 import com.avengers.starbucks.dto.UserDetailsDTO;
 import com.avengers.starbucks.model.Product;
+import com.avengers.starbucks.dto.GenericResponse;
 
 @Repository("mysql")
 public class StarbucksDAOImpl implements StarbucksDAO{
@@ -82,6 +84,45 @@ public class StarbucksDAOImpl implements StarbucksDAO{
 	}
 	
 	@Override
+	public float getCardBalance(String emailId, String cardNumber) {
+		float cardBalance = -999999999;
+		String cardBalanceStr = null;
+		String sql = "SELECT CardBalance FROM Starbucks_AddCards where EmailID = ? and CardNumber = ?";
+		try {
+			cardBalanceStr = (String) jdbcTemplate.queryForObject(sql, new Object[]{emailId, cardNumber}, String.class);
+		}catch(EmptyResultDataAccessException e) {
+			//e.printStackTrace();
+		}		
+		if(cardBalanceStr != null)
+			cardBalance = Float.parseFloat(cardBalanceStr);
+		return cardBalance;
+	}
+	
+	@Override
+	public float getOrderAmount(String emailId, int orderId) {
+		float orderAmount = -999999999;
+	//	String cardBalanceStr = null;
+		String sql = "SELECT Amount FROM Starbucks_Order where EmailID = ? and id = ?";
+		try {
+			orderAmount = jdbcTemplate.queryForObject(sql, new Object[]{emailId, orderId}, Float.class);
+		}catch(EmptyResultDataAccessException e) {
+			//e.printStackTrace();
+		}		
+		return orderAmount;
+	}
+	
+	@Override
+	public void updateOnSuccessfulPayment(String emailId, String cardNumber, int orderId, String new_balance) {
+		//UPDATE `starbucks`.`Starbucks_Order` SET `Amount` = '5' WHERE (`id` = '3');
+		String sql = "UPDATE Starbucks_AddCards SET CardBalance = ? WHERE EmailID = ? and CardNumber = ?";
+		jdbcTemplate.update(sql, new_balance, emailId, cardNumber);
+		
+		//set paid true in order table
+		String sql1 = "UPDATE Starbucks_Order SET Paid = ? WHERE id = ?";
+		jdbcTemplate.update(sql1, 1, orderId);
+	}
+	
+	@Override
 	  public boolean insertOrder(String emailId, String orderDescription, float billingAmt) {
 	    String sql = "INSERT INTO " + TABLE_ORDER + " (EmailID, Description, Amount, Paid)"
 	        + " VALUES (?, ?, ?, ?)";
@@ -105,74 +146,32 @@ public class StarbucksDAOImpl implements StarbucksDAO{
 	  }
 	  
 	  @Override
-		public void createUser(SignupUser userRequest) {
-			
+		public GenericResponse createUser(SignupUser userRequest) {
+			GenericResponse msg = new GenericResponse();
 			String sql = "INSERT INTO Profile_Info (First_Name, Last_Name, Email_Id, Password) VALUES (?, ?, ?, ?)";
 			
-			passwordToHash = userRequest.getPassword();
-			
-			try {
-	            // Create MessageDigest instance for MD5
-	            MessageDigest md = MessageDigest.getInstance("MD5");
-	            //Add password bytes to digest
-	            md.update(passwordToHash.getBytes());
-	            //Get the hash's bytes
-	            byte[] bytes = md.digest();
-	            //This bytes[] has bytes in decimal format;
-	            //Convert it to hexadecimal format
-	            StringBuilder sb = new StringBuilder();
-	            for(int i=0; i< bytes.length ;i++)
-	            {
-	                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
-	            }
-	            //Get complete hashed password in hex format
-	            generatedPassword = sb.toString();
-	        }
-	        catch (NoSuchAlgorithmException e)
-	        {
-	            e.printStackTrace();
-	        }
-			
 			jdbcTemplate.update(sql, userRequest.getFirstName(), userRequest.getLastName(), 
-					userRequest.getEmailId(),generatedPassword );
+					userRequest.getEmailId(),userRequest.getPassword());
+		
+			msg.setMessage("User Signup Successful");
+			
+	        return msg;
 		}
 
 		@Override
-		public UserDetailsDTO getUserDetails(LoginUser userLoginRequest) {
+		public UserDetailsDTO getUserDetails(String emailID) {
 			
-			String sql = "SELECT * FROM Profile_Info WHERE Email_Id = ? AND Password = ?";
+			String sql = "SELECT * FROM Profile_Info WHERE Email_Id = ?";
+			UserDetailsDTO userDetailsDTO = new UserDetailsDTO();
 			
-			String pwd = userLoginRequest.getPassword();
-			String check = null;
-			
-			try {
-	            // Create MessageDigest instance for MD5
-	            MessageDigest md = MessageDigest.getInstance("MD5");
-	            //Add password bytes to digest
-	            md.update(pwd.getBytes());
-	            //Get the hash's bytes
-	            byte[] bytes = md.digest();
-	            //This bytes[] has bytes in decimal format;
-	            //Convert it to hexadecimal format
-	            StringBuilder sb = new StringBuilder();
-	            for(int i=0; i< bytes.length ;i++)
-	            {
-	                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
-	            }
-	            //Get complete hashed password in hex format
-	            check = sb.toString();
-	        }
-	        catch (NoSuchAlgorithmException e)
-	        {
-	            e.printStackTrace();
-	        }
-			
-			
-			
-			UserDetailsDTO userDetailsDTO = (UserDetailsDTO) jdbcTemplate.queryForObject(
-					sql, new Object[] { userLoginRequest.getEmailId(), check }, 
+			try { 
+				userDetailsDTO = (UserDetailsDTO) jdbcTemplate.queryForObject(
+					sql, new Object[] {emailID}, 
 					new BeanPropertyRowMapper(UserDetailsDTO.class));
-			return userDetailsDTO;
+			} catch(EmptyResultDataAccessException e) {
+				e.printStackTrace();
+			}
+			return userDetailsDTO ;
 		}
 
 }

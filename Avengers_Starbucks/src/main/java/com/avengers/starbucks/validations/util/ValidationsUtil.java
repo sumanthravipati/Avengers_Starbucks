@@ -20,8 +20,6 @@ public class ValidationsUtil {
 	    	outputMessage.setErrorResponse("First Name cannot be null or empty");
 	    }else if (addCardsRequest.getLastName().equalsIgnoreCase("null") || addCardsRequest.getLastName().equalsIgnoreCase("")) {
 	    	outputMessage.setErrorResponse("Last Name cannot be null or empty");
-	    }else {
-	    	outputMessage.setSuccessResponse("Initial Validation Successfull");
 	    }
 		return outputMessage;
 	}

@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.xml.bind.ValidationException;
 
 import com.avengers.starbucks.dto.AddCardsRequest;
+import com.avengers.starbucks.dto.GenericResponse;
 import com.avengers.starbucks.dto.LoginUser;
 import com.avengers.starbucks.dto.SignupUser;
 import com.avengers.starbucks.dto.UserDetailsDTO;
@@ -23,8 +24,14 @@ public interface StarbucksDAO {
 
 	void updateStock(int productId, int quantity);
 	
-	void createUser(SignupUser userRequest);
+	GenericResponse createUser(SignupUser userRequest);
 	
-	UserDetailsDTO getUserDetails(LoginUser userLoginRequest) throws ValidationException;
+	UserDetailsDTO getUserDetails(String emailID) throws ValidationException;
+	
+	float getCardBalance(String emailId, String cardNumber);
+	
+	float getOrderAmount(String emailId, int orderId);
+	
+	void updateOnSuccessfulPayment(String emailId, String cardNumber, int orderId, String new_balance);
 	
 }

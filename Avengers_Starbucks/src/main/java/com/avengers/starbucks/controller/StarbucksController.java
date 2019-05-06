@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,6 +14,7 @@ import com.avengers.starbucks.dto.AddCardsRequest;
 import com.avengers.starbucks.dto.GenericResponse;
 import com.avengers.starbucks.dto.LoginUser;
 import com.avengers.starbucks.dto.OrderRequest;
+import com.avengers.starbucks.dto.PaymentRequest;
 import com.avengers.starbucks.dto.SignupUser;
 import com.avengers.starbucks.dto.StarbucksOutputMessage;
 import com.avengers.starbucks.dto.UserDetailsDTO;
@@ -32,7 +34,6 @@ public class StarbucksController {
 		ResponseEntity<GenericResponse> responseEntity = null;
 		try {
 			GenericResponse response = this.starbucksService.SignupRequest(userRequest);
-			response.setMessage("User Sign Up Successful");
 			responseEntity = new ResponseEntity<GenericResponse>(response, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -44,14 +45,14 @@ public class StarbucksController {
     //User login request mapping
     @RequestMapping(value = "/userLogin", method = RequestMethod.POST, produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<UserDetailsDTO> userLogin(@RequestBody LoginUser userLoginRequest) {
-		ResponseEntity<UserDetailsDTO> responseEntity = null;
+	public ResponseEntity<GenericResponse> userLogin(@RequestBody LoginUser userLoginRequest) {
+		ResponseEntity<GenericResponse> responseEntity = null;
 		try {
-			UserDetailsDTO response = this.starbucksService.LoginRequest(userLoginRequest);
-			responseEntity = new ResponseEntity<UserDetailsDTO>(response, HttpStatus.OK);
+			GenericResponse response = this.starbucksService.LoginRequest(userLoginRequest);
+			responseEntity = new ResponseEntity<GenericResponse>(response, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			responseEntity = new ResponseEntity<UserDetailsDTO>(new UserDetailsDTO(), HttpStatus.EXPECTATION_FAILED);
+			responseEntity = new ResponseEntity<GenericResponse>(new GenericResponse(), HttpStatus.EXPECTATION_FAILED);
 		}
 		return responseEntity;
 	}
@@ -85,6 +86,20 @@ public class StarbucksController {
       }
 
       return starbucksService.manageOrder(orderRequest);
+    }
+    
+    
+  //order payment
+    @RequestMapping(value = "/doPayment", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    public StarbucksOutputMessage doOrderPaymnet(@RequestBody PaymentRequest paymentRequest) {
+    	String emailId = paymentRequest.getEmailId();
+    	String cardNumber = paymentRequest.getCardNumber();
+    	int orderId = paymentRequest.getOrderId();
+    	
+		// Add validation code on request params
+    	return starbucksService.doPayment(emailId, cardNumber, orderId);
+    	
     }
     
 }
