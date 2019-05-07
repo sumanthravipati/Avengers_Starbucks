@@ -271,18 +271,18 @@ public class StarbucksServiceImpl implements StarbucksService {
 
   @Override
   public StarbucksOutputMessage doPayment(String emailId, String cardNumber, int orderId) {
-    StarbucksOutputMessage response = new StarbucksOutputMessage();
-    float bal = starbucksDAO.getCardBalance(emailId, cardNumber);
-    System.out.println("balance  " + bal);
-    if (bal == -999999999) {
-      response.setErrorResponse("Card not found.Please add card or provide the right card number");
-      return response;
-    }
-    float orderAmount = starbucksDAO.getOrderAmount(emailId, orderId);
-    if (orderAmount == -999999999) {
-      response.setErrorResponse("No Order Found to make payment");
-      return response;
-    }
+	  StarbucksOutputMessage response = new StarbucksOutputMessage();
+      float bal = starbucksDAO.getCardBalance(emailId, cardNumber);
+      System.out.println("balance  " + bal);
+      if(bal == -999999999) {
+    	  response.setErrorResponse("Card not found.Please add card or provide the right card number");
+    	  return response;
+      }
+      float orderAmount = starbucksDAO.getOrderAmount(emailId, orderId);
+      if(orderAmount == -999999999) {
+    	  response.setErrorResponse("No Order Found to make payment");
+    	  return response;
+      }
 
     if (orderAmount > bal) {
       response.setErrorResponse("Insufficient Balance");

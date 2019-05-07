@@ -18,6 +18,7 @@ import com.avengers.starbucks.dao.StarbucksDAO;
 import com.avengers.starbucks.db.ProductRowMapper;
 import com.avengers.starbucks.dto.AddCardsRequest;
 import com.avengers.starbucks.dto.LoginUser;
+import com.avengers.starbucks.dto.OrderDetails;
 import com.avengers.starbucks.dto.SignupUser;
 import com.avengers.starbucks.dto.UserDetailsDTO;
 import com.avengers.starbucks.model.Product;
@@ -113,6 +114,9 @@ public class StarbucksDAOImpl implements StarbucksDAO{
 	
 	@Override
 	public void updateOnSuccessfulPayment(String emailId, String cardNumber, int orderId, String new_balance) {
+		
+		OrderDetails orderDetaills = new OrderDetails();
+		
 		//UPDATE `starbucks`.`Starbucks_Order` SET `Amount` = '5' WHERE (`id` = '3');
 		String sql = "UPDATE Starbucks_AddCards SET CardBalance = ? WHERE EmailID = ? and CardNumber = ?";
 		jdbcTemplate.update(sql, new_balance, emailId, cardNumber);
@@ -120,6 +124,28 @@ public class StarbucksDAOImpl implements StarbucksDAO{
 		//set paid true in order table
 		String sql1 = "UPDATE Starbucks_Order SET Paid = ? WHERE id = ?";
 		jdbcTemplate.update(sql1, 1, orderId);
+		
+		//update the quantity in product table
+		String sql2 = "SELECT Description, Amount, Qty FROM Starbucks_Order where EmailID = ? and id = ?";
+		try { 
+			orderDetaills = (OrderDetails) jdbcTemplate.queryForObject(sql2, new Object[] {emailId, orderId}, new BeanPropertyRowMapper(OrderDetails.class));
+			float amt = orderDetaills.getAmount();
+			String desc = orderDetaills.getDescription();
+			String qty = orderDetaills.getQty();
+			String[] descArray = desc.split(",");
+			String[] qtyArray = qty.split(",");
+			for (int i = 0;i < descArray.length;i++) {
+				String sql_qty = "SELECT Qty FROM Starbucks_Product where id = ?";
+				int newQty = (jdbcTemplate.queryForObject(sql_qty, new Object[]{descArray[i]}, int.class)) - Integer.parseInt(qtyArray[i])  ;
+				System.out.println("newQty"+newQty);
+				String updateAddCardTableSql = "UPDATE Starbucks_Product SET Qty = ? WHERE id = ?";
+				jdbcTemplate.update(updateAddCardTableSql, newQty, descArray[i]);
+			}
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	@Override
