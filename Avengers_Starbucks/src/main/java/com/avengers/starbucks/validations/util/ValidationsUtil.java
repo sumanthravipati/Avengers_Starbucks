@@ -16,10 +16,6 @@ public class ValidationsUtil {
 	    	outputMessage.setErrorResponse("Card Number cannot be null or empty");
 	    }else if (addCardsRequest.getEmailId().equalsIgnoreCase("null") || addCardsRequest.getEmailId().equalsIgnoreCase("")) {
 	    	outputMessage.setErrorResponse("Email ID cannot be null or empty");
-	    }else if (addCardsRequest.getFirstName().equalsIgnoreCase("null") || addCardsRequest.getFirstName().equalsIgnoreCase("")) {
-	    	outputMessage.setErrorResponse("First Name cannot be null or empty");
-	    }else if (addCardsRequest.getLastName().equalsIgnoreCase("null") || addCardsRequest.getLastName().equalsIgnoreCase("")) {
-	    	outputMessage.setErrorResponse("Last Name cannot be null or empty");
 	    }
 		return outputMessage;
 	}
