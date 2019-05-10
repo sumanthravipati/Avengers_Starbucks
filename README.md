@@ -9,3 +9,7 @@ Starbucks CMPE_202 Final Portion
 ## MVC Design View
 
 ![component](https://user-images.githubusercontent.com/42687329/57514346-2405e280-72c5-11e9-9782-35c866bee80e.png)
+
+# Design decisions
+
+# Feature Set
