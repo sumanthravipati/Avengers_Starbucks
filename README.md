@@ -12,7 +12,7 @@ Starbucks CMPE_202 Final Portion
 
 ### Design decisions
 
-We haev choosen MVC design architecture. Advantages of using MVC architecture:
+We have choosen MVC design architecture. Advantages of using MVC architecture:
  
 1. Faster Application Development Process:
  
