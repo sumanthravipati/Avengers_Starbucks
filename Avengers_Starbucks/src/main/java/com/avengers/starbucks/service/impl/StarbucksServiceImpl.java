@@ -55,7 +55,7 @@ public class StarbucksServiceImpl implements StarbucksService {
     fn = userRequest.getFirstName();
     ln = userRequest.getLastName();
 
-    if (fn.equals("") || ln.equals("") || emailEntered.equals("") || passwordToHash.equals("")) {
+    if (fn == null || fn.equals("") || ln == null || ln.equals("") || emailEntered == null || emailEntered.equals("") || passwordToHash == null || passwordToHash.equals("")) {
       msg.setMessage("Please enter all the required details");
       return msg;
     }
