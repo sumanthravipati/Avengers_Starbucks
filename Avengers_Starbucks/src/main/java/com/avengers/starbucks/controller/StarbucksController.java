@@ -89,10 +89,14 @@ public class StarbucksController {
     String emailId = paymentRequest.getEmailId();
     String cardNumber = paymentRequest.getCardNumber();
     int orderId = paymentRequest.getOrderId();
-
-    // Add validation code on request params
-    return starbucksService.doPayment(emailId, cardNumber, orderId);
-
+    
+    StarbucksOutputMessage response =null;
+    try {
+    	response = this.starbucksService.doPayment(emailId, cardNumber, orderId);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return response;
   }
 
 }
