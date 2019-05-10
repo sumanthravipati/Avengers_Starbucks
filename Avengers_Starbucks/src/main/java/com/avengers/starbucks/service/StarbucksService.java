@@ -1,26 +1,20 @@
 package com.avengers.starbucks.service;
 
+import com.avengers.starbucks.dto.*;
+
 import javax.xml.bind.ValidationException;
 
-import com.avengers.starbucks.dto.AddCardsRequest;
-import com.avengers.starbucks.dto.GenericResponse;
-import com.avengers.starbucks.dto.LoginUser;
-import com.avengers.starbucks.dto.OrderRequest;
-import com.avengers.starbucks.dto.SignupUser;
-import com.avengers.starbucks.dto.StarbucksOutputMessage;
-import com.avengers.starbucks.dto.UserDetailsDTO;
+public interface StarbucksService {
 
-public interface StarbucksService{
-    
-	StarbucksOutputMessage addCards(AddCardsRequest addCardsRequest) throws ValidationException;
+  StarbucksOutputMessage addCards(AddCardsRequest addCardsRequest) throws ValidationException;
 
-	StarbucksOutputMessage manageOrder(OrderRequest request);
-	
-	GenericResponse SignupRequest(SignupUser userRequest);
-    
-    GenericResponse LoginRequest(LoginUser userLoginRequest) throws ValidationException;
-    
-    StarbucksOutputMessage doPayment(String emailId, String cardNumber, int orderId);
+  StarbucksOutputMessage manageOrder(OrderRequest request) throws ValidationException;
 
-	boolean checkduplicate();
+  GenericResponse SignupRequest(SignupUser userRequest);
+
+  GenericResponse LoginRequest(LoginUser userLoginRequest) throws ValidationException;
+
+  StarbucksOutputMessage doPayment(String emailId, String cardNumber, int orderId);
+
+  boolean checkduplicate();
 }

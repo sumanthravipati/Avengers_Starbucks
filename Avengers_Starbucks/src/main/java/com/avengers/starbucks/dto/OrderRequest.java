@@ -10,6 +10,9 @@ public class OrderRequest {
   private List<ProductRequest> products;
   private String emailId;
 
+  public OrderRequest() {
+
+  }
 
   public OrderRequest(List<ProductRequest> products, String emailId) {
     this.products = products;
