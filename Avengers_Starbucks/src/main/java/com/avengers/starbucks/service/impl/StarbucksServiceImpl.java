@@ -125,6 +125,13 @@ public class StarbucksServiceImpl implements StarbucksService {
   @Override
   public GenericResponse LoginRequest(LoginUser userLoginRequest) throws ValidationException {
     GenericResponse msg = new GenericResponse();
+    
+    //Login request validations
+    if (userLoginRequest.getEmailId() == null || userLoginRequest.getPassword() == null) {
+    	msg.setMessage("Please Enter all the required fields Email ID and Password");
+    	return msg;
+    }
+    
     UserDetailsDTO userDetailsDTO = starbucksDAO.getUserDetails(userLoginRequest.getEmailId());
     String actaulPswd = userDetailsDTO.getPassword();
     String pwd = userLoginRequest.getPassword();
