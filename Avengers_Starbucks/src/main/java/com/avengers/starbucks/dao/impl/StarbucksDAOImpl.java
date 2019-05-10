@@ -101,9 +101,9 @@ public class StarbucksDAOImpl implements StarbucksDAO{
 	public float getOrderAmount(String emailId, int orderId) {
 		float orderAmount = -999999999;
 	//	String cardBalanceStr = null;
-		String sql = "SELECT Amount FROM Starbucks_Order where EmailID = ? and id = ?";
+		String sql = "SELECT Amount FROM Starbucks_Order where EmailID = ? and id = ? and paid = ?";
 		try {
-			orderAmount = jdbcTemplate.queryForObject(sql, new Object[]{emailId, orderId}, Float.class);
+			orderAmount = jdbcTemplate.queryForObject(sql, new Object[]{emailId, orderId, 0}, Float.class);
 		}catch(EmptyResultDataAccessException e) {
 			//e.printStackTrace();
 		}		

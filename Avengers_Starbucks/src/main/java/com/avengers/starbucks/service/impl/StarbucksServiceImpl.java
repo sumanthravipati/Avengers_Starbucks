@@ -287,7 +287,7 @@ public class StarbucksServiceImpl implements StarbucksService {
       }
       float orderAmount = starbucksDAO.getOrderAmount(emailId, orderId);
       if(orderAmount == -999999999) {
-    	  response.setErrorResponse("No Order Found to make payment");
+    	  response.setErrorResponse("Order Already Paid Or Not Found..!!");
     	  return response;
       }
 
