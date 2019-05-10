@@ -45,10 +45,10 @@ public class StarbucksDAOImpl implements StarbucksDAO{
 		String startingBalance = "100";
 		
 		try {
-			String sql = "INSERT INTO Starbucks_AddCards (FirstName, LastName, EmailID, CardNumber,"
-					+ " CardCode, CardBalance) VALUES (?, ?, ?, ?, ?, ?)";
+			String sql = "INSERT INTO Starbucks_AddCards (EmailID, CardNumber,"
+					+ " CardCode, CardBalance) VALUES (?, ?, ?, ?)";
 			
-			jdbcTemplate.update(sql, addCardsRequest.getFirstName(), addCardsRequest.getLastName(), addCardsRequest.getEmailId(),
+			jdbcTemplate.update(sql, addCardsRequest.getEmailId(),
 					addCardsRequest.getCardNumber(), addCardsRequest.getCardCode(), startingBalance);
 			
 			outputMap.put("status", "true");
@@ -76,8 +76,6 @@ public class StarbucksDAOImpl implements StarbucksDAO{
 			addCardDetails.setCardCode((String)obj.get("CardCode"));
 			addCardDetails.setCardNumber((String)obj.get("CardNumber"));
 			addCardDetails.setEmailId((String)obj.get("EmailID"));
-			addCardDetails.setFirstName((String)obj.get("FirstName"));
-			addCardDetails.setLastName((String)obj.get("LastName"));
 			
 			addCardsList.add(addCardDetails);
 		}
