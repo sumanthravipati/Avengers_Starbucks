@@ -125,13 +125,6 @@ public class StarbucksServiceImpl implements StarbucksService {
   @Override
   public GenericResponse LoginRequest(LoginUser userLoginRequest) throws ValidationException {
     GenericResponse msg = new GenericResponse();
-    
-    //Login request validations
-    if (userLoginRequest.getEmailId() == null || userLoginRequest.getPassword() == null) {
-    	msg.setMessage("Please Enter all the required fields Email ID and Password");
-    	return msg;
-    }
-    
     UserDetailsDTO userDetailsDTO = starbucksDAO.getUserDetails(userLoginRequest.getEmailId());
     String actaulPswd = userDetailsDTO.getPassword();
     String pwd = userLoginRequest.getPassword();
@@ -297,7 +290,8 @@ public class StarbucksServiceImpl implements StarbucksService {
     }
     Float new_balance = bal - orderAmount;
     starbucksDAO.updateOnSuccessfulPayment(emailId, cardNumber, orderId, new_balance.toString());
-    response.setSuccessResponse("Payment was Successfull. The new balance is: " + new_balance);
+    //response.setSuccessResponse("Payment was Successfull. The new balance is: " + new_balance);
+    response.setSuccessResponse("Payment was Successfull. $"+ orderAmount + " has been debited from your card. The current card balance is: $" + new_balance);
     return response;
   }
 
