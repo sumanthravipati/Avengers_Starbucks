@@ -8,6 +8,8 @@ Harshit Nagpal
 # Avengers_Starbucks
 Starbucks CMPE_202 Final Portion
 
+### Project Journel, Project Board, Git Commit History : refer attached excel sheet- Avengers_ProjectBoard_ProjectJournel.xlxs
+
 
 ## Architecture Diagram
 
