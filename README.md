@@ -9,7 +9,8 @@ Zankhna Randeri
 Harshit Nagpal  
 
 
-### Project Journal, Project Board, Git Commit History : refer attached excel sheet- Avengers_ProjectBoard_ProjectJournel.xlxs
+### Project Journal, Project Board, Git Commit History :
+Refer attached excel sheet- Avengers_ProjectBoard_ProjectJournel.xlxs
 
 
 ## Architecture Diagram
