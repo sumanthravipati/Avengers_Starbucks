@@ -55,7 +55,11 @@ It is obvious that you make minor changes in a web application such as like chan
   Payment - Shilpi
   
 ### Extra Credit
-1) Deploy API to AWS in an Auto Scaled EC2 Cluster with Load Balancer. 
+1) Deploy API to AWS in an Auto Scaled EC2 Cluster with Load Balancer  
+
+<img width="1021" alt="Screen Shot 2019-05-10 at 7 36 25 PM" src="https://user-images.githubusercontent.com/42687329/57564064-f10e2e00-735a-11e9-9b55-bfd78147c275.png">  
+
 2) Deploy API to AWS as Docker Containers in Amazon Containers
+<img width="469" alt="Screen Shot 2019-05-10 at 7 35 10 PM" src="https://user-images.githubusercontent.com/42687329/57564055-d50a8c80-735a-11e9-8404-702752975987.png">
 
 
