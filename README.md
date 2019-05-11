@@ -1,3 +1,6 @@
+### Avengers_Starbucks
+Starbucks CMPE_202 Final Portion
+
 ### Team Name: Avengers
 ### Team Members:
 Sumanth Ravipati   
@@ -5,8 +8,6 @@ Shilpi Kumari
 Zankhna Randeri   
 Harshit Nagpal  
 
-# Avengers_Starbucks
-Starbucks CMPE_202 Final Portion
 
 ### Project Journal, Project Board, Git Commit History : refer attached excel sheet- Avengers_ProjectBoard_ProjectJournel.xlxs
 
