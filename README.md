@@ -71,5 +71,8 @@ It is obvious that you make minor changes in a web application such as like chan
 ### Burndown Chart
 ![burn](https://user-images.githubusercontent.com/42687329/57564165-531b6300-735c-11e9-9da2-9bcca20231d5.png)
 
+### Google Sprint Task Sheet
+<img width="1362" alt="Screen Shot 2019-05-10 at 7 48 20 PM" src="https://user-images.githubusercontent.com/42687329/57564184-9d044900-735c-11e9-82c5-2e7f5bce54a2.png">
+
 
 
