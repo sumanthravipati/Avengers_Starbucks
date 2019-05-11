@@ -48,9 +48,14 @@ It is helpful for the developers because the same components can be used and cal
 It is obvious that you make minor changes in a web application such as like changing colors, screen layouts, fonts and adding an extra support for mobile phones or tablets. Furthermore, adding a new type of views is very easy in MVC pattern as Model part does not depend on the views part. So, any changes in the Model will never affect the entire architecture.
 
 ### Feature Set
-
+ 5 APIs: 
   Login/Sign Up - Harshit
-	Add Card - Sumanth
-	Manage Order - Zankhna
-	Payment - Shilpi
+  Add Card - Sumanth
+  Manage Order - Zankhna
+  Payment - Shilpi
+  
+### Extra Credit
+1) Deploy API to AWS in an Auto Scaled EC2 Cluster with Load Balancer. 
+2) Deploy API to AWS as Docker Containers in Amazon Containers
+
 
