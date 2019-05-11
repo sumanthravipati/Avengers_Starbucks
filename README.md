@@ -64,4 +64,12 @@ It is obvious that you make minor changes in a web application such as like chan
 2) Deploy API to AWS as Docker Containers in Amazon Containers
 <img width="469" alt="Screen Shot 2019-05-10 at 7 35 10 PM" src="https://user-images.githubusercontent.com/42687329/57564055-d50a8c80-735a-11e9-8404-702752975987.png">
 
+### Story Board
+
+![story](https://user-images.githubusercontent.com/42687329/57564164-50207280-735c-11e9-8b4b-3e7eb00cf38f.png)
+
+### Burndown Chart
+![burn](https://user-images.githubusercontent.com/42687329/57564165-531b6300-735c-11e9-9da2-9bcca20231d5.png)
+
+
 
