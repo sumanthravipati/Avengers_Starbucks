@@ -49,10 +49,10 @@ It is obvious that you make minor changes in a web application such as like chan
 
 ### Feature Set
  5 APIs: 
-  Login/Sign Up - Harshit
-  Add Card - Sumanth
-  Manage Order - Zankhna
-  Payment - Shilpi
+  Login/Sign Up - Harshit  
+  Add Card - Sumanth  
+  Manage Order - Zankhna  
+  Payment - Shilpi  
   
 ### Extra Credit
 1) Deploy API to AWS in an Auto Scaled EC2 Cluster with Load Balancer  
